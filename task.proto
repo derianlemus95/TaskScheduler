@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package worker;
+
+message Task {
+    int32 taskId = 1;
+    int32 priority = 2;
+    string commands = 3;
+    string status = 4;
+}
+
+message TaskStatus {
+    string status = 1;
+    int32 taskId = 2;
+}
+
+message HeartBeatRequest {
+    int32 workerId = 1;
+    repeated int32 taskId = 2;
+    repeated string status = 3;
+    int32 current_capacity = 4;
+}
+
+message HeartBeatResponse {
+    int32 workerId = 1;
+    int32 current_capacity = 2;
+    repeated TaskStatus tasks = 3;
+}
+
+service Scheduler {
+    rpc SubmitTask (Task) returns (TaskStatus);
+    rpc Heartbeat (stream HeartBeatRequest) returns (stream HeartBeatResponse);
+}
